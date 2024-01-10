@@ -3,33 +3,22 @@
 # 31-MAY-23 V1.2
 
 from tkinter import messagebox as mBox
-import pygame  # librería para el desarrollo de videojuegos en segunda dimensión 2D
+import pygame # librería para el desarrollo de videojuegos en segunda dimensión 2D
 from pygame import *
 import copy  # Brinda opciones de copeado(para evitar problemas al copear listas)
 import sys  # sys — Configuración específica del sistema(interprete y recurso para interactuar con el entorno operativo)
 import random
 pygame.font.init()  # inicializar pygame
-sudokuBase = [[0, 0, 0, 0, 0, 0, 0, 0, 0],
-              [0, 0, 0, 0, 0, 0, 0, 0, 0],
-              [0, 0, 0, 0, 0, 0, 0, 0, 0],
-              [0, 0, 0, 0, 0, 0, 0, 0, 0],
-              [0, 0, 0, 0, 0, 0, 0, 0, 0],
-              [0, 0, 0, 0, 0, 0, 0, 0, 0],
-              [0, 0, 0, 0, 0, 0, 0, 0, 0],
-              [0, 0, 0, 0, 0, 0, 0, 0, 0],
-              [0, 0, 0, 0, 0, 0, 0, 0, 0]]
+
+# sudokuBase = [[0 for j in range(9)] for i in range(9)] # Crea la estructura del sudoku 9 * 9
+
 sudokuInicial = []
 sudokuFinal = []
 
 
 def lineas_a_sudokus(sudoku_x):
-    y = 0
-    global sudokuBase
-    for i in range(9):
-        for j in range(9):
-            sudokuBase[i][j] = int(sudoku_x[y])  # Se introduce valor por valor en el sudoku en blanco
-            y += 1  # Contador para llegar al 81
-    return sudokuBase
+    sudoku = [[ int(sudoku_x[i+j*9]) for i in range(9)] for j in range(9) ]
+    return sudoku
 
 
 def nuevo_sudoku():  # Introduce un nuevo sudoku
@@ -50,10 +39,10 @@ nuevo_sudoku()
 sudokuTemp = copy.deepcopy(list(sudokuInicial[:]))  # Copea el sudoku inicial al sudoku temporal
 
 # Variables
-cordLinea = 500 / 3  # Para dibujar las lineas grandes
-cordCuadro = cordLinea / 3  # Para dibujar las lineas pequeñas
 total = 500  # Valor universal para el tamaño del sudoku
-entreNueve = 500 / 9  # Para dibujar los numeros
+cordLinea = total / 3  # Para dibujar las lineas grandes
+cordCuadro = cordLinea / 3  # Para dibujar las lineas pequeñas
+entreNueve = total / 9  # Para dibujar los numeros
 
 # Colores
 BLACK = (0, 0, 0)
@@ -69,9 +58,9 @@ size = (553, 573)
 # Crear Ventana
 ventana = pygame.display.set_mode(size)  # Tamaño Ventana
 pygame.display.set_caption("SUDOKU")  # Nombre Ventana
-    # Logo
-# img = pygame.image.load("LogoSudoku.png")  # Imagen de logo
-# display.set_icon(img)  # Coloca el logo
+# Logo
+img = pygame.image.load("LogoSudoku.png")  # Imagen de logo
+display.set_icon(img)  # Coloca el logo
 
 # ----- Botones(Tamaño) y su Texto respectivamente -----
 miFuente = font.SysFont("ComicSans", 30)  # Fuente de texto
@@ -89,7 +78,17 @@ colorOrange = Rect(501, total + 47, 20, 20)
 colorBlue = Rect(522, total + 26, 20, 20)
 colorMagenta = Rect(522, total + 47, 20, 20)
 # ----- ----- ----- ----- ----- ----- ----- ----- -----
-
+numPress = {
+    pygame.K_KP1 : 1, pygame.K_1 : 1,
+    pygame.K_KP2 : 2, pygame.K_2 : 2,
+    pygame.K_KP3 : 3, pygame.K_3 : 3,
+    pygame.K_KP4 : 4, pygame.K_4 : 4,
+    pygame.K_KP5 : 5, pygame.K_5 : 5,
+    pygame.K_KP6 : 6, pygame.K_6 : 6,
+    pygame.K_KP7 : 7, pygame.K_7 : 7,
+    pygame.K_KP8 : 8, pygame.K_8 : 8,
+    pygame.K_KP9 : 9, pygame.K_9 : 9,
+}
 
 def quit_pygame():  # Cerrar ventana
     pygame.quit()
@@ -152,44 +151,27 @@ def ventana_juego():
             if evento.type == MOUSEBUTTONDOWN and evento.button == 1:  # Evento click
                 if botonExit.collidepoint(mouse.get_pos()):  # Click boton Exit
                     quit_pygame()
-                elif botonCheck.collidepoint(mouse.get_pos()):  # Click boton Ckeck
+                if botonCheck.collidepoint(mouse.get_pos()):  # Click boton Ckeck
                     funcion_check()
-                elif botonReload.collidepoint(mouse.get_pos()):  # Click boton Reload
+                if botonReload.collidepoint(mouse.get_pos()):  # Click boton Reload
                     # Borra los numeros ingresados al copear el sudoku inicial al sudoku temporal
                     sudokuTemp = copy.deepcopy(sudokuInicial[:])
-                elif botonNew.collidepoint(mouse.get_pos()):  # Click boton New
+                if botonNew.collidepoint(mouse.get_pos()):  # Click boton New
                     nuevo_sudoku()  # Busca en el archivo un sudoku nuevo y lo asigna para que se dibuje
                     sudokuTemp = copy.deepcopy(sudokuInicial[:])  # Copea el sudoku inicial al sudoku temporal
-                elif colorOrange.collidepoint(mouse.get_pos()):
+                if colorOrange.collidepoint(mouse.get_pos()):
                     ColorGeneral = 'orange'
-                elif colorBlue.collidepoint(mouse.get_pos()):
+                if colorBlue.collidepoint(mouse.get_pos()):
                     ColorGeneral = 'blue'
-                elif colorMagenta.collidepoint(mouse.get_pos()):
+                if colorMagenta.collidepoint(mouse.get_pos()):
                     ColorGeneral = 'magenta'
-                elif colorGreen.collidepoint(mouse.get_pos()):
+                if colorGreen.collidepoint(mouse.get_pos()):
                     ColorGeneral = (0, 153, 0)
             if evento.type == pygame.KEYDOWN:  # Detecta los numeros tecleados y se actualiza el valor de "numero"
-                if evento.key == pygame.K_KP1 or evento.key == pygame.K_1:
-                    numero = 1
-                elif evento.key == pygame.K_KP2 or evento.key == pygame.K_2:
-                    numero = 2
-                elif evento.key == pygame.K_KP3 or evento.key == pygame.K_3:
-                    numero = 3
-                elif evento.key == pygame.K_KP4 or evento.key == pygame.K_4:
-                    numero = 4
-                elif evento.key == pygame.K_KP5 or evento.key == pygame.K_5:
-                    numero = 5
-                elif evento.key == pygame.K_KP6 or evento.key == pygame.K_6:
-                    numero = 6
-                elif evento.key == pygame.K_KP7 or evento.key == pygame.K_7:
-                    numero = 7
-                elif evento.key == pygame.K_KP8 or evento.key == pygame.K_8:
-                    numero = 8
-                elif evento.key == pygame.K_KP9 or evento.key == pygame.K_9:
-                    numero = 9
-                elif evento.key == pygame.K_KP0 or evento.key == pygame.K_0:
-                    numero = 0
-                    borrar_uno = 1  # Asigna un "1" para identificar el click del "0" y borrar el numero seleccionado
+                if evento.key in numPress:
+                    numero = numPress[evento.key]
+                if evento.key in (pygame.K_KP0, pygame.K_0, pygame.K_BACKSPACE, pygame.K_SPACE):
+                    borrar_uno = 1  # Asigna un "1" para borrar el numero seleccionado
         # - Pinta fondos de botones al detectar el cursor sobre ellos
         if botonExit.collidepoint(mouse.get_pos()):
             draw.rect(ventana, RED, botonExit, 0)
